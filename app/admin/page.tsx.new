@@ -1,0 +1,600 @@
+"use client"
+
+import { useState } from "react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ArrowLeft, Plus, Settings, Users, BarChart3, FileText, Eye, Edit, Trash2, BookOpen } from "lucide-react"
+
+export default function AdminPage() {
+  const [selectedTab, setSelectedTab] = useState("projects")
+  const [showCreateProject, setShowCreateProject] = useState(false)
+  const [showCreateKnowledge, setShowCreateKnowledge] = useState(false)
+  const [editingKnowledge, setEditingKnowledge] = useState<number | null>(null)
+
+  // 模拟数据
+  const projects = [
+    {
+      id: 1,
+      name: "赛博坦防火墙销售培训",
+      description: "针对新产品的销售技能培训",
+      status: "active",
+      participants: 45,
+      completionRate: 78,
+      createdDate: "2024-01-10",
+      visibility: "all",
+    },
+    {
+      id: 2,
+      name: "异议处理专项训练",
+      description: "提升销售人员异议处理能力",
+      status: "draft",
+      participants: 0,
+      completionRate: 0,
+      createdDate: "2024-01-15",
+      visibility: "sales",
+    },
+    {
+      id: 3,
+      name: "客户谈判技巧培训",
+      description: "高级销售谈判策略与技巧",
+      status: "completed",
+      participants: 32,
+      completionRate: 95,
+      createdDate: "2023-12-20",
+      visibility: "senior",
+    },
+  ]
+
+  const reports = [
+    {
+      id: 1,
+      title: "2024年1月培训总结报告",
+      type: "monthly",
+      generatedDate: "2024-01-31",
+      participants: 156,
+      avgScore: 84.5,
+    },
+    {
+      id: 2,
+      title: "赛博坦产品培训效果分析",
+      type: "project",
+      generatedDate: "2024-01-28",
+      participants: 45,
+      avgScore: 87.2,
+    },
+  ]
+
+  const knowledgeBase = [
+    {
+      id: 1,
+      title: "赛博坦防火墙产品手册",
+      category: "产品知识",
+      type: "PDF",
+      uploadDate: "2024-01-10",
+      size: "2.4MB",
+      downloads: 45,
+      status: "published",
+    },
+    {
+      id: 2,
+      title: "销售异议处理技巧",
+      category: "销售技巧",
+      type: "视频",
+      uploadDate: "2024-01-15",
+      size: "125MB",
+      downloads: 32,
+      status: "published",
+    },
+    {
+      id: 3,
+      title: "客户谈判案例集",
+      category: "案例分析",
+      type: "文档",
+      uploadDate: "2024-01-20",
+      size: "1.8MB",
+      downloads: 28,
+      status: "draft",
+    },
+  ]
+
+  const handleCreateProject = () => {
+    // 模拟创建项目
+    alert("项目创建成功！")
+    setShowCreateProject(false)
+  }
+
+  const handleGenerateReport = (type: string) => {
+    // 模拟生成报告
+    alert(`正在生成${type}报告，请稍候...`)
+  }
+
+  const handleCreateKnowledge = () => {
+    // 模拟创建知识库内容
+    alert("知识库内容创建成功！")
+    setShowCreateKnowledge(false)
+  }
+
+  const handleEditKnowledge = (id: number) => {
+    // 设置正在编辑的知识库项目ID
+    setEditingKnowledge(id)
+  }
+
+  const handleUpdateKnowledge = () => {
+    // 模拟更新知识库内容
+    alert("知识库内容更新成功！")
+    setEditingKnowledge(null)
+  }
+
+  const handleCancelEdit = () => {
+    // 取消编辑
+    setEditingKnowledge(null)
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border bg-card">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Link href="/">
+                <Button variant="ghost" size="sm">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  返回首页
+                </Button>
+              </Link>
+              <h1 className="text-2xl font-bold text-foreground">👨‍💼 管理员后台</h1>
+            </div>
+            <div className="flex space-x-2">
+              <Button
+                variant={selectedTab === "projects" ? "default" : "outline"}
+                onClick={() => setSelectedTab("projects")}
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                项目管理
+              </Button>
+              <Button variant={selectedTab === "users" ? "default" : "outline"} onClick={() => setSelectedTab("users")}>
+                <Users className="w-4 h-4 mr-2" />
+                用户管理
+              </Button>
+              <Button
+                variant={selectedTab === "reports" ? "default" : "outline"}
+                onClick={() => setSelectedTab("reports")}
+              >
+                <BarChart3 className="w-4 h-4 mr-2" />
+                报告中心
+              </Button>
+              <Button
+                variant={selectedTab === "knowledge" ? "default" : "outline"}
+                onClick={() => setSelectedTab("knowledge")}
+              >
+                <BookOpen className="w-4 h-4 mr-2" />
+                知识库管理
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">
+        {selectedTab === "projects" && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">陪练项目管理</h2>
+              <div className="flex space-x-2">
+                <Button onClick={() => setShowCreateProject(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  创建项目
+                </Button>
+                <Button variant="outline" onClick={() => setSelectedTab("knowledge")}>
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  知识库管理
+                </Button>
+              </div>
+            </div>
+
+            {showCreateProject && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>创建新项目</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">项目名称</label>
+                    <Input placeholder="输入项目名称" />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">项目描述</label>
+                    <Textarea placeholder="输入项目描述" rows={3} />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">可见人群</label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="选择可见人群" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">全体员工</SelectItem>
+                          <SelectItem value="sales">销售部门</SelectItem>
+                          <SelectItem value="senior">高级销售</SelectItem>
+                          <SelectItem value="custom">自定义</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">分组逻辑</label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="选择分组方式" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="department">按部门分组</SelectItem>
+                          <SelectItem value="random">随机分组</SelectItem>
+                          <SelectItem value="manual">手动分组</SelectItem>
+                          <SelectItem value="none">不分组</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button onClick={handleCreateProject}>创建项目</Button>
+                    <Button variant="outline" onClick={() => setShowCreateProject(false)}>
+                      取消
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            <div className="grid gap-4">
+              {projects.map((project) => (
+                <Card key={project.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <h3 className="font-semibold text-lg">{project.name}</h3>
+                          <Badge
+                            variant={
+                              project.status === "active"
+                                ? "default"
+                                : project.status === "draft"
+                                  ? "secondary"
+                                  : "outline"
+                            }
+                          >
+                            {project.status === "active" ? "进行中" : project.status === "draft" ? "草稿" : "已完成"}
+                          </Badge>
+                        </div>
+                        <p className="text-muted-foreground mb-4">{project.description}</p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <p className="text-muted-foreground">参与人数</p>
+                            <p className="font-semibold">{project.participants}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">完成率</p>
+                            <p className="font-semibold">{project.completionRate}%</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">创建日期</p>
+                            <p className="font-semibold">{project.createdDate}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">可见范围</p>
+                            <p className="font-semibold">
+                              {project.visibility === "all"
+                                ? "全体"
+                                : project.visibility === "sales"
+                                  ? "销售部"
+                                  : "高级销售"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2 ml-4">
+                        <Button size="sm" variant="outline">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {selectedTab === "users" && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">用户权限管理</h2>
+              <Button variant="outline" onClick={() => setSelectedTab("knowledge")}>
+                <BookOpen className="w-4 h-4 mr-2" />
+                知识库管理
+              </Button>
+            </div>
+            <Card>
+              <CardContent className="p-6">
+                <div className="text-center py-12">
+                  <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">用户管理功能</h3>
+                  <p className="text-muted-foreground">用户角色分配、权限设置、部门管理等功能正在开发中</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {selectedTab === "reports" && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">报告中心</h2>
+              <div className="flex space-x-2">
+                <Button onClick={() => handleGenerateReport("月度")}>生成月度报告</Button>
+                <Button variant="outline" onClick={() => handleGenerateReport("项目")}>
+                  生成项目报告
+                </Button>
+                <Button variant="outline" onClick={() => setSelectedTab("knowledge")}>
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  知识库管理
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              {reports.map((report) => (
+                <Card key={report.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold text-lg mb-2">{report.title}</h3>
+                        <div className="grid grid-cols-3 gap-4 text-sm">
+                          <div>
+                            <p className="text-muted-foreground">生成日期</p>
+                            <p className="font-semibold">{report.generatedDate}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">参与人数</p>
+                            <p className="font-semibold">{report.participants}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">平均分数</p>
+                            <p className="font-semibold">{report.avgScore}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="outline">
+                          <FileText className="w-4 h-4 mr-2" />
+                          查看
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          下载
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {selectedTab === "knowledge" && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">知识库管理</h2>
+              <Button onClick={() => setShowCreateKnowledge(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                上传资料
+              </Button>
+            </div>
+
+            {showCreateKnowledge && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>上传新资料</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">资料标题</label>
+                    <Input placeholder="输入资料标题" />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">资料描述</label>
+                    <Textarea placeholder="输入资料描述" rows={3} />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">资料分类</label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="选择分类" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="product">产品知识</SelectItem>
+                          <SelectItem value="skills">销售技巧</SelectItem>
+                          <SelectItem value="cases">案例分析</SelectItem>
+                          <SelectItem value="other">其他</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">资料类型</label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="选择类型" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pdf">PDF文档</SelectItem>
+                          <SelectItem value="video">视频</SelectItem>
+                          <SelectItem value="doc">文档</SelectItem>
+                          <SelectItem value="audio">音频</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">上传文件</label>
+                    <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
+                      <p className="text-muted-foreground mb-2">支持导入PPT/Word/Excel文档并自动转换为培训场景</p>
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className="flex space-x-2">
+                          <Button variant="outline" className="flex items-center">
+                            <FileText className="w-4 h-4 mr-2" />
+                            选择PPT
+                          </Button>
+                          <Button variant="outline" className="flex items-center">
+                            <FileText className="w-4 h-4 mr-2" />
+                            选择Word
+                          </Button>
+                          <Button variant="outline" className="flex items-center">
+                            <FileText className="w-4 h-4 mr-2" />
+                            选择Excel
+                          </Button>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <input type="checkbox" id="autoConvert" className="rounded" defaultChecked />
+                          <label htmlFor="autoConvert" className="text-sm">自动转换为培训场景</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button onClick={handleCreateKnowledge}>上传资料</Button>
+                    <Button variant="outline" onClick={() => setShowCreateKnowledge(false)}>
+                      取消
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {editingKnowledge !== null && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>编辑资料</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">资料标题</label>
+                    <Input defaultValue={knowledgeBase.find(item => item.id === editingKnowledge)?.title || ""} />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">资料描述</label>
+                    <Textarea defaultValue="编辑资料描述" rows={3} />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">资料分类</label>
+                      <Select defaultValue={knowledgeBase.find(item => item.id === editingKnowledge)?.category.toLowerCase() || ""}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="product">产品知识</SelectItem>
+                          <SelectItem value="skills">销售技巧</SelectItem>
+                          <SelectItem value="cases">案例分析</SelectItem>
+                          <SelectItem value="other">其他</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">资料状态</label>
+                      <Select defaultValue={knowledgeBase.find(item => item.id === editingKnowledge)?.status || ""}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="published">已发布</SelectItem>
+                          <SelectItem value="draft">草稿</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button onClick={handleUpdateKnowledge}>保存修改</Button>
+                    <Button variant="outline" onClick={handleCancelEdit}>
+                      取消
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            <div className="grid gap-4">
+              {knowledgeBase.map((item) => (
+                <Card key={item.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <h3 className="font-semibold text-lg">{item.title}</h3>
+                          <Badge
+                            variant={
+                              item.status === "published"
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
+                            {item.status === "published" ? "已发布" : "草稿"}
+                          </Badge>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+                          <div>
+                            <p className="text-muted-foreground">分类</p>
+                            <p className="font-semibold">{item.category}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">类型</p>
+                            <p className="font-semibold">{item.type}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">上传日期</p>
+                            <p className="font-semibold">{item.uploadDate}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">文件大小</p>
+                            <p className="font-semibold">{item.size}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">下载次数</p>
+                            <p className="font-semibold">{item.downloads}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2 ml-4">
+                        <Button size="sm" variant="outline">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => handleEditKnowledge(item.id)}>
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  )
+}
