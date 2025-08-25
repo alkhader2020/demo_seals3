@@ -119,6 +119,17 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Inter", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+  .text-secondary {
+    color: #6b7280;
+  }
+  .text-muted {
+    color: #9ca3af;
   }
 }
 /* ضبط حجم النصوص لجميع الأجهزة */
@@ -144,5 +155,107 @@ html {
 @media (max-width: 480px) {
   html {
     font-size: 12px;
+  }
+}
+
+/* 自定义渐变按钮样式 */
+.bg-gradient-btn {
+  background: linear-gradient(135deg, #6a5af9, #9b8afc);
+  box-shadow: 0 4px 10px rgba(106, 90, 249, 0.3);
+  color: white;
+}
+.bg-gradient-btn:hover {
+  background: linear-gradient(135deg, #5847f1, #8675f9);
+}
+
+/* 学习中心渐变按钮 */
+.bg-gradient-learning {
+  background: linear-gradient(135deg, #6a5af9, #9b8afc);
+  box-shadow: 0 4px 10px rgba(106, 90, 249, 0.3);
+  color: white;
+}
+.bg-gradient-learning:hover {
+  background: linear-gradient(135deg, #5847f1, #8675f9);
+}
+
+/* 管理中心渐变按钮 */
+.bg-gradient-management {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  color: white;
+}
+.bg-gradient-management:hover {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+/* 卡片阴影 */
+.card-shadow {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+.card-shadow:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+}
+
+/* 淡入动画 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* 滑入动画 */
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+/* 返回顶部按钮 */
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6a5af9, #9b8afc);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(106, 90, 249, 0.3);
+  z-index: 100;
+  transition: all 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+}
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+.back-to-top:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(106, 90, 249, 0.4);
+}
+
+/* 移动设备按钮优化 */
+@media (max-width: 768px) {
+  .mobile-full-btn {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
   }
 }
