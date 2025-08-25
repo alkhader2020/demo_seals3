@@ -1,108 +1,87 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, User, Lock, Sparkles } from "lucide-react"
+import type React from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Eye, EyeOff, User, Lock, Sparkles } from "lucide-react";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [focusedField, setFocusedField] = useState<string | null>(null)
-  const [isMobile, setIsMobile] = useState(false)
-  const router = useRouter()
-
-  // 检测是否为移动设备
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-    
-    // 初始检查
-    checkIfMobile()
-    
-    // 添加窗口大小变化监听
-    window.addEventListener("resize", checkIfMobile)
-    
-    // 清理监听器
-    return () => window.removeEventListener("resize", checkIfMobile)
-  }, [])
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
     if (username.trim() === "" || password.trim() === "") {
-      setError("请输入用户名和密码")
-      setIsLoading(false)
-      return
+      setError("请输入用户名和密码");
+      setIsLoading(false);
+      return;
     }
 
-    try {
-      // Simulate login process
-      setTimeout(() => {
-        // 确保localStorage操作成功
-        try {
-          localStorage.setItem("isLoggedIn", "true")
-          localStorage.setItem("username", username)
+    setTimeout(() => {
+      try {
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("username", username);
 
-          // 验证设置是否成功
-          const isLoggedIn = localStorage.getItem("isLoggedIn") === "true"
-          if (isLoggedIn) {
-            router.push("/")
-          } else {
-            setError("登录失败，请重试")
-          }
-        } catch (storageError) {
-          console.error("localStorage error:", storageError)
-          setError("浏览器不支持本地存储，请使用较新版本的浏览器")
+        if (localStorage.getItem("isLoggedIn") === "true") {
+          router.push("/");
+        } else {
+          setError("登录失败，请重试");
         }
-        setIsLoading(false)
-      }, 1000)
-    } catch (error) {
-      console.error("Login error:", error)
-      setError("登录过程中发生错误，请重试")
-      setIsLoading(false)
-    }
-  }
+      } catch {
+        setError("浏览器不支持本地存储，请使用较新版本的浏览器");
+      }
+      setIsLoading(false);
+    }, 1000);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-6">
+      {/* الخلفية المتحركة */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 left-1/4 w-40 h-40 sm:w-64 sm:h-64 bg-blue-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-56 h-56 sm:w-96 sm:h-96 bg-indigo-200/20 rounded-full blur-3xl"></div>
       </div>
 
-      <Card className={`relative backdrop-blur-sm bg-white/95 shadow-2xl border-0 ring-1 ring-slate-200/50 ${isMobile ? "w-full max-w-sm mx-2" : "w-full max-w-md"}`}>
-        <CardHeader className={`text-center ${isMobile ? "pb-6" : "pb-8"}`}>
+      {/* بطاقة تسجيل الدخول */}
+      <Card className="relative backdrop-blur-sm bg-white/95 shadow-2xl border-0 ring-1 ring-slate-200/50 w-full max-w-sm sm:max-w-md lg:max-w-lg">
+        <CardHeader className="text-center pb-6 sm:pb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
-            <CardTitle className={`${isMobile ? "text-xl" : "text-2xl"} font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent`}>
+            <CardTitle className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
               智能销售培训平台
             </CardTitle>
           </div>
-          <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto rounded-full"></div>
-          <p className={`text-slate-600 mt-4 font-medium ${isMobile ? "text-sm" : ""}`}>开启您的AI驱动销售学习之旅</p>
+          <div className="w-16 sm:w-20 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto rounded-full"></div>
+          <p className="text-slate-600 mt-4 font-medium text-sm sm:text-base">
+            开启您的AI驱动销售学习之旅
+          </p>
         </CardHeader>
 
-        <CardContent className={`space-y-${isMobile ? "4" : "6"}`}>
-          <form onSubmit={handleLogin} className={`space-y-${isMobile ? "4" : "5"}`}>
+        <CardContent className="space-y-4 sm:space-y-6">
+          <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
+            {/* اسم المستخدم */}
             <div className="space-y-2">
-              <Label htmlFor="username" className={`text-sm font-semibold text-slate-700 ${isMobile ? "text-xs" : ""}`}>
+              <Label htmlFor="username" className="text-xs sm:text-sm font-semibold text-slate-700">
                 用户名
               </Label>
               <div
-                className={`relative transition-all duration-200 ${focusedField === "username" ? "scale-[1.02]" : ""}`}
+                className={`relative transition-all duration-200 ${
+                  focusedField === "username" ? "scale-[1.02]" : ""
+                }`}
               >
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
@@ -114,17 +93,20 @@ export default function LoginPage() {
                   onFocus={() => setFocusedField("username")}
                   onBlur={() => setFocusedField(null)}
                   disabled={isLoading}
-                  className={`pl-10 ${isMobile ? "h-10" : "h-12"} border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200`}
+                  className="pl-10 h-10 sm:h-12 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                 />
               </div>
             </div>
 
+            {/* كلمة المرور */}
             <div className="space-y-2">
-              <Label htmlFor="password" className={`text-sm font-semibold text-slate-700 ${isMobile ? "text-xs" : ""}`}>
+              <Label htmlFor="password" className="text-xs sm:text-sm font-semibold text-slate-700">
                 密码
               </Label>
               <div
-                className={`relative transition-all duration-200 ${focusedField === "password" ? "scale-[1.02]" : ""}`}
+                className={`relative transition-all duration-200 ${
+                  focusedField === "password" ? "scale-[1.02]" : ""
+                }`}
               >
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
@@ -136,7 +118,7 @@ export default function LoginPage() {
                   onFocus={() => setFocusedField("password")}
                   onBlur={() => setFocusedField(null)}
                   disabled={isLoading}
-                  className={`pl-10 pr-10 ${isMobile ? "h-10" : "h-12"} border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200`}
+                  className="pl-10 pr-10 h-10 sm:h-12 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                 />
                 <button
                   type="button"
@@ -148,15 +130,17 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* رسالة الخطأ */}
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm text-center">
                 {error}
               </div>
             )}
 
+            {/* زر الدخول */}
             <Button
               type="submit"
-              className={`w-full ${isMobile ? "h-10" : "h-12"} bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]`}
+              className="w-full h-10 sm:h-12 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -172,5 +156,5 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

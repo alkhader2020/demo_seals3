@@ -13,13 +13,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta name="color-scheme" content="light" />
         <meta name="theme-color" content="#ffffff" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
       </head>
       <body className="bg-gray-50 text-gray-900 antialiased">
-        {/* محتوى الصفحات */}
-        <div className="min-h-screen pb-[env(safe-area-inset-bottom)]">{children}</div>
+        {/* الحاوية الرئيسية مع عرض ثابت للكمبيوتر */}
+        <div className="min-h-screen pb-[env(safe-area-inset-bottom)] flex justify-center">
+          <div className="w-full max-w-[1280px] px-4">{children}</div>
+        </div>
 
-        {/* شريط التبويب السفلي (موبايل) */}
+        {/* شريط التنقل السفلي للموبايل */}
         <BottomTabs />
       </body>
     </html>

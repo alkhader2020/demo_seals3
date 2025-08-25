@@ -121,3 +121,28 @@
     @apply bg-background text-foreground;
   }
 }
+/* ضبط حجم النصوص لجميع الأجهزة */
+html {
+  font-size: 16px;
+}
+
+/* التابلت الكبير */
+@media (max-width: 1024px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+/* التابلت العادي */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* الموبايل */
+@media (max-width: 480px) {
+  html {
+    font-size: 12px;
+  }
+}
