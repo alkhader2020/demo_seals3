@@ -1,0 +1,97 @@
+"use client";
+import { useSearchParams, useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
+
+type CardProps = {
+  title: string;
+  desc: string;
+  cta: string;
+  to: string;
+};
+
+function Card({ title, desc, cta, to }: CardProps) {
+  const router = useRouter();
+  return (
+    <div className="rounded-2xl bg-white shadow-md border p-4 md:p-5">
+      <div className="text-lg md:text-xl font-semibold">{title}</div>
+      <div className="mt-1 text-xs md:text-sm text-gray-500">{desc}</div>
+      <button
+        onClick={() => router.push(to)}
+        className="mt-3 inline-flex items-center justify-center rounded-xl px-4 py-2 md:py-3
+        text-sm md:text-base text-white bg-gradient-to-r from-purple-500 to-green-500 active:opacity-90"
+      >
+        {cta}
+      </button>
+    </div>
+  );
+}
+
+export default function Home() {
+  const sp = useSearchParams();
+  const tab = (sp.get("tab") as "learning" | "management") ?? "learning";
+
+  return (
+    <main className="mx-auto max-w-screen-xl px-4 md:px-6 pt-4 pb-safe">
+      {/* 退出按钮 */}
+      <button
+        onClick={() => {
+          // 清除 localStorage 中的登录信息
+          try {
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("username");
+          } catch (error) {
+            console.error("Error clearing localStorage:", error);
+          }
+
+          // 清除 sessionStorage 中的登录信息
+          try {
+            sessionStorage.removeItem("isLoggedIn");
+            sessionStorage.removeItem("username");
+          } catch (error) {
+            console.error("Error clearing sessionStorage:", error);
+          }
+
+          // 清除 cookies 中的登录信息
+          try {
+            document.cookie = "isLoggedIn=; path=/; max-age=0";
+            document.cookie = "username=; path=/; max-age=0";
+          } catch (error) {
+            console.error("Error clearing cookies:", error);
+          }
+
+          // 直接跳转到登录页面
+          window.location.href = "/login";
+        }}
+        className="absolute top-4 right-4 flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-pink-500 hover:to-red-500 text-white font-semibold px-4 py-2 rounded-full shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg text-sm z-10"
+      >
+        <LogOut className="w-4 h-4" />
+        <span>退出登录</span>
+      </button>
+
+      {/* 标题 */}
+      <header className="text-center mb-4">
+        <h1 className="text-2xl md:text-3xl font-extrabold">智能销售培训系统</h1>
+        <p className="text-xs md:text-sm text-gray-500">提升销售技能，实现业绩突破</p>
+      </header>
+
+      {/* 学习中心/管理中心：仅由 URL 的 ?tab= 控制 */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
+        {tab === "learning" ? (
+          <>
+            <Card title="销售基础训练" desc="系统学习产品知识和销售技巧" cta="开始学习" to="/training" />
+            <Card title="销售角色实训" desc="通过角色扮演提升销售技能" cta="开始实训" to="/live-training" />
+            <Card title="学习任务模式" desc="自主学习与任务管理" cta="进入任务" to="/learning-modes" />
+            <Card title="学员成绩分析" desc="查看成长轨迹与训练记录" cta="查看分析" to="/team-analysis" />
+          </>
+        ) : (
+          <>
+            <Card title="任务管理中心" desc="创建和管理陪练任务" cta="开始任务" to="/tasks" />
+            <Card title="管理员后台" desc="项目管理与报告生成" cta="进入后台" to="/admin" />
+            <Card title="评分修正" desc="申诉与人工评分处理" cta="进入系统" to="/score-review" />
+            <Card title="仪表盘可视化" desc="数据分析导出" cta="查看数据" to="/dashboard" />
+          </>
+        )}
+      </section>
+    </main>
+  );
+}
