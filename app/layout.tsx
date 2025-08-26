@@ -19,8 +19,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-gray-50 text-gray-900 antialiased">
-        {/* الحاوية الرئيسية مع عرض ثابت للكمبيوتر */}
-        <div className="min-h-screen pb-[env(safe-area-inset-bottom)] flex justify-center">
+        {/* 主容器，确保在移动端有足够的底部内边距 */}
+        <div className="min-h-screen pb-safe flex justify-center">
           <div className="w-full max-w-[1280px] px-4">{children}</div>
         </div>
 

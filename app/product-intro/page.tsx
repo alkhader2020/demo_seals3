@@ -58,36 +58,42 @@ export default function ProductIntroPage() {
             {task && <p className="text-gray-600 mt-1">任务: {task.title}</p>}
           </div>
 
-          <div className="p-6 space-y-6">
-            <div className="bg-gray-50 p-5 rounded-lg">
-              <h2 className="text-xl font-semibold text-gray-800 mb-3">场景说明</h2>
-              <p className="text-gray-600 leading-relaxed">
-                在这个场景中，您将学习如何有效地向客户介绍产品，包括产品特点、优势以及如何针对客户需求进行个性化介绍。
-                通过角色扮演和实际演练，您将掌握产品介绍的核心技巧，提高销售转化率。
-              </p>
-            </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* 左侧：用户提问款和回答款 */}
+              <div className="lg:col-span-2 space-y-6">
+                <div className="bg-gray-50 p-5 rounded-lg">
+                  <h2 className="text-xl font-semibold text-gray-800 mb-3">场景说明</h2>
+                  <p className="text-gray-600 leading-relaxed">
+                    在这个场景中，您将学习如何有效地向客户介绍产品，包括产品特点、优势以及如何针对客户需求进行个性化介绍。
+                    通过角色扮演和实际演练，您将掌握产品介绍的核心技巧，提高销售转化率。
+                  </p>
+                </div>
 
-            <div className="bg-blue-50 p-5 rounded-lg">
-              <h2 className="text-xl font-semibold text-gray-800 mb-3">学习目标</h2>
-              <ul className="list-disc pl-5 text-gray-600 space-y-2">
-                <li>掌握产品核心卖点</li>
-                <li>学习有效的产品介绍技巧</li>
-                <li>提高客户沟通能力</li>
-                <li>增强产品说服力</li>
-                <li>根据客户类型调整介绍策略</li>
-              </ul>
-            </div>
+                <div className="bg-blue-50 p-5 rounded-lg">
+                  <h2 className="text-xl font-semibold text-gray-800 mb-3">学习目标</h2>
+                  <ul className="list-disc pl-5 text-gray-600 space-y-2">
+                    <li>掌握产品核心卖点</li>
+                    <li>学习有效的产品介绍技巧</li>
+                    <li>提高客户沟通能力</li>
+                    <li>增强产品说服力</li>
+                    <li>根据客户类型调整介绍策略</li>
+                  </ul>
+                </div>
+              </div>
 
-            <div className="bg-yellow-50 p-5 rounded-lg">
-              <h2 className="text-xl font-semibold text-gray-800 mb-3">场景流程</h2>
-              <ol className="list-decimal pl-5 text-gray-600 space-y-2">
-                <li>了解客户背景和需求</li>
-                <li>分析产品与客户需求的匹配点</li>
-                <li>准备产品介绍的关键点</li>
-                <li>进行产品介绍演示</li>
-                <li>处理客户疑问和异议</li>
-                <li>总结产品优势并促成下一步行动</li>
-              </ol>
+              {/* 右侧：陪练提醒款 */}
+              <div className="bg-yellow-50 p-5 rounded-lg">
+                <h2 className="text-xl font-semibold text-gray-800 mb-3">💡 陪练提醒</h2>
+                <ol className="list-decimal pl-5 text-gray-600 space-y-2">
+                  <li>了解客户背景和需求</li>
+                  <li>分析产品与客户需求的匹配点</li>
+                  <li>准备产品介绍的关键点</li>
+                  <li>进行产品介绍演示</li>
+                  <li>处理客户疑问和异议</li>
+                  <li>总结产品优势并促成下一步行动</li>
+                </ol>
+              </div>
             </div>
           </div>
 

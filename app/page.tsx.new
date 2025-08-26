@@ -1,6 +1,5 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
 
 type CardProps = {
   title: string;
@@ -32,42 +31,6 @@ export default function Home() {
 
   return (
     <main className="mx-auto max-w-screen-xl px-4 md:px-6 pt-4 pb-safe">
-      {/* 退出按钮 */}
-      <button
-        onClick={() => {
-          // 清除 localStorage 中的登录信息
-          try {
-            localStorage.removeItem("isLoggedIn");
-            localStorage.removeItem("username");
-          } catch (error) {
-            console.error("Error clearing localStorage:", error);
-          }
-
-          // 清除 sessionStorage 中的登录信息
-          try {
-            sessionStorage.removeItem("isLoggedIn");
-            sessionStorage.removeItem("username");
-          } catch (error) {
-            console.error("Error clearing sessionStorage:", error);
-          }
-
-          // 清除 cookies 中的登录信息
-          try {
-            document.cookie = "isLoggedIn=; path=/; max-age=0";
-            document.cookie = "username=; path=/; max-age=0";
-          } catch (error) {
-            console.error("Error clearing cookies:", error);
-          }
-
-          // 直接跳转到登录页面
-          window.location.href = "/login";
-        }}
-        className="absolute top-4 right-4 flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-pink-500 hover:to-red-500 text-white font-semibold px-4 py-2 rounded-full shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg text-sm z-10"
-      >
-        <LogOut className="w-4 h-4" />
-        <span>退出登录</span>
-      </button>
-
       {/* 标题 */}
       <header className="text-center mb-4">
         <h1 className="text-2xl md:text-3xl font-extrabold">智能销售培训系统</h1>

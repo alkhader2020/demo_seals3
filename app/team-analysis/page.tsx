@@ -1,17 +1,25 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Users, Trophy, TrendingUp, Download, BarChart3, Target, Award } from "lucide-react"
+import { ArrowLeft, Users, Trophy, TrendingUp, Download, BarChart3, Target, Award, BookOpen, FileText, MessageSquare, User } from "lucide-react"
 
 export default function TeamAnalysisPage() {
   const [selectedTask, setSelectedTask] = useState("all")
-  const [selectedDimension, setSelectedDimension] = useState("overall")
-  const [selectedPeriod, setSelectedPeriod] = useState("month")
+  const [showNotification, setShowNotification] = useState(false)
+  const [pointsAwarded, setPointsAwarded] = useState(0)
+  const [showTrainingNotification, setShowTrainingNotification] = useState(false)
+  const [trainingData, setTrainingData] = useState({
+    type: "销售基础培训 :选择题训练",
+    time: "",
+    points: 0,
+    accuracy: 0,
+    feedback: ""
+  })
 
   // 模拟团队数据
   const teamData = {
@@ -20,7 +28,104 @@ export default function TeamAnalysisPage() {
       averageScore: 82,
       completionRate: 87,
       topPerformer: "张三",
+      trainingCount: 24,
+      highestScore: 92,
+      highestScoreDate: "2023-10-15",
+      dialogueCount: 8,
+      dialogueAvgScore: 84,
+      rolePlayCount: 6,
+      rolePlayAvgScore: 86,
     },
+    // 培训记录数据
+    trainingRecords: [
+      {
+        id: "1",
+        title: "产品知识选择题训练",
+        date: "2023-10-15",
+        duration: "30分钟",
+        score: 92,
+        status: "已完成",
+        questions: 20,
+        correct: 18,
+        feedback: "产品知识掌握优秀，对新产品特性理解透彻，继续保持！"
+      },
+      {
+        id: "2",
+        title: "销售技巧选择题训练",
+        date: "2023-10-10",
+        duration: "25分钟",
+        score: 85,
+        status: "已完成",
+        questions: 15,
+        correct: 13,
+        feedback: "销售技巧掌握良好，建议加强客户需求分析方面的训练。"
+      },
+      {
+        id: "3",
+        title: "客户沟通选择题训练",
+        date: "2023-10-05",
+        duration: "35分钟",
+        score: 78,
+        status: "已完成",
+        questions: 20,
+        correct: 16,
+        feedback: "沟通基础知识掌握尚可，但在处理复杂客户场景方面需要提升。"
+      },
+      {
+        id: "4",
+        title: "异议处理选择题训练",
+        date: "2023-09-28",
+        duration: "40分钟",
+        score: 88,
+        status: "已完成",
+        questions: 25,
+        correct: 22,
+        feedback: "异议处理能力较强，能够识别常见客户异议并提供有效解决方案。"
+      }
+    ],
+    // 开放问答训练数据
+    openTrainingRecords: [
+      {
+        id: "1",
+        title: "产品知识开放问答训练",
+        date: "2023-10-12",
+        duration: "45分钟",
+        score: 88,
+        status: "已完成",
+        questions: 5,
+        feedback: "产品知识回答全面，逻辑清晰，对产品优势的阐述非常到位。建议在细节方面多加关注。"
+      },
+      {
+        id: "2",
+        title: "销售场景开放问答训练",
+        date: "2023-10-07",
+        duration: "50分钟",
+        score: 82,
+        status: "已完成",
+        questions: 4,
+        feedback: "销售场景分析合理，解决方案具有可行性。在应对复杂客户需求时可以更加灵活。"
+      },
+      {
+        id: "3",
+        title: "客户沟通开放问答训练",
+        date: "2023-10-02",
+        duration: "40分钟",
+        score: 76,
+        status: "已完成",
+        questions: 5,
+        feedback: "沟通策略基本正确，但在处理客户异议时的回应略显生硬，需要更加自然流畅。"
+      },
+      {
+        id: "4",
+        title: "销售流程开放问答训练",
+        date: "2023-09-25",
+        duration: "55分钟",
+        score: 90,
+        status: "已完成",
+        questions: 6,
+        feedback: "销售流程掌握熟练，各环节衔接顺畅，客户需求分析深入，表现优秀！"
+      }
+    ],
     rankings: [
       {
         rank: 1,
@@ -131,6 +236,62 @@ export default function TeamAnalysisPage() {
     }
   }
 
+  // 处理积分通知
+  const handleAwardPoints = () => {
+    // 随机生成积分数量 (5-20分)
+    const points = Math.floor(Math.random() * 16) + 5;
+    setPointsAwarded(points);
+    setShowNotification(true);
+
+    // 5秒后自动关闭通知
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 5000);
+  }
+
+  // 处理训练完成通知
+  const handleTrainingCompletion = () => {
+    // 生成当前时间
+    const now = new Date();
+    const timeString = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+    // 随机生成正确率 (60%-100%)
+    const accuracy = Math.floor(Math.random() * 41) + 60;
+
+    // 根据正确率生成积分和反馈
+    let points = 0;
+    let feedback = "";
+
+    if (accuracy >= 90) {
+      points = 20;
+      feedback = "表现优秀！您对销售基础知识的掌握非常扎实，继续保持！";
+    } else if (accuracy >= 80) {
+      points = 15;
+      feedback = "表现良好！您对大部分销售基础知识掌握得不错，可以再加强薄弱环节。";
+    } else if (accuracy >= 70) {
+      points = 10;
+      feedback = "表现一般。建议您多复习销售基础知识，加强理解和记忆。";
+    } else {
+      points = 5;
+      feedback = "需要加强。建议您重新学习销售基础知识，多做练习提高。";
+    }
+
+    setTrainingData({
+      type: "销售基础培训 :选择题训练",
+      time: timeString,
+      points,
+      accuracy,
+      feedback
+    });
+
+    setShowTrainingNotification(true);
+
+    // 10秒后自动关闭通知
+    setTimeout(() => {
+      setShowTrainingNotification(false);
+    }, 10000);
+  }
+
   const getScoreColor = (score: number) => {
     if (score >= 90) return "text-green-600"
     if (score >= 80) return "text-blue-600"
@@ -151,8 +312,54 @@ export default function TeamAnalysisPage() {
     }
   }
 
+  // 获取评价等级
+  const getGradeLevel = (score: number) => {
+    if (score >= 90) return { text: "优秀", color: "text-green-600" }
+    if (score >= 80) return { text: "良好", color: "text-blue-600" }
+    if (score >= 70) return { text: "中等", color: "text-yellow-600" }
+    return { text: "待提高", color: "text-red-600" }
+  }
+
+  // 页面加载时触发积分通知
+  useEffect(() => {
+    handleAwardPoints();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
+      {/* 积分通知 */}
+      {showNotification && (
+        <div className="fixed top-4 right-4 z-50 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-center animate-fadeIn">
+          <div className="mr-2">🎉</div>
+          <div>
+            <p className="font-bold">恭喜获得积分！</p>
+            <p className="text-sm">您已获得 {pointsAwarded} 积分</p>
+          </div>
+        </div>
+      )}
+
+      {/* 训练完成通知 */}
+      {showTrainingNotification && (
+        <div className="fixed top-4 right-4 z-50 bg-blue-100 border border-blue-400 text-blue-800 px-4 py-3 rounded-lg shadow-lg animate-fadeIn max-w-md">
+          <div className="flex items-start">
+            <div className="mr-3 text-xl">📊</div>
+            <div>
+              <p className="font-bold text-lg">训练完成！</p>
+              <div className="mt-2 space-y-1">
+                <p><span className="font-medium">训练类型:</span> {trainingData.type}</p>
+                <p><span className="font-medium">完成时间:</span> {trainingData.time}</p>
+                <p><span className="font-medium">获得积分:</span> {trainingData.points} 分</p>
+                <p><span className="font-medium">正确率:</span> {trainingData.accuracy}%</p>
+              </div>
+              <div className="mt-3 p-2 bg-blue-50 rounded">
+                <p className="font-medium">评价反馈:</p>
+                <p className="text-sm">{trainingData.feedback}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-4">
@@ -163,7 +370,13 @@ export default function TeamAnalysisPage() {
                 返回首页
               </Button>
             </Link>
-            <h1 className="text-2xl font-bold text-foreground">👥 团队分析</h1>
+            <h1 className="text-2xl font-bold text-foreground">📊 个人数据</h1>
+            <Button 
+              onClick={handleTrainingCompletion}
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+            >
+              模拟训练完成通知
+            </Button>
           </div>
         </div>
       </header>
@@ -179,40 +392,14 @@ export default function TeamAnalysisPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">全部任务</SelectItem>
-                <SelectItem value="product">产品介绍</SelectItem>
-                <SelectItem value="objection">异议处理</SelectItem>
-                <SelectItem value="pricing">报价谈判</SelectItem>
+                <SelectItem value="choice">选择题训练</SelectItem>
+                <SelectItem value="open">开放问答训练</SelectItem>
+                <SelectItem value="dialogue">自由对话练习</SelectItem>
+                <SelectItem value="role">销售角色实训</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div>
-            <label className="text-sm font-medium mb-2 block">排名维度</label>
-            <Select value={selectedDimension} onValueChange={setSelectedDimension}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="overall">综合得分</SelectItem>
-                <SelectItem value="product">产品知识</SelectItem>
-                <SelectItem value="communication">沟通技巧</SelectItem>
-                <SelectItem value="objection">异议处理</SelectItem>
-                <SelectItem value="closing">成交技能</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <label className="text-sm font-medium mb-2 block">分析周期</label>
-            <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="week">最近一周</SelectItem>
-                <SelectItem value="month">最近一月</SelectItem>
-                <SelectItem value="quarter">最近三月</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+
           <div className="flex items-end">
             <Button variant="outline" className="w-full bg-transparent">
               <Download className="w-4 h-4 mr-2" />
@@ -228,8 +415,8 @@ export default function TeamAnalysisPage() {
               <div className="flex items-center gap-3">
                 <Users className="w-8 h-8 text-primary" />
                 <div>
-                  <div className="text-2xl font-bold">{teamData.overview.totalMembers}</div>
-                  <p className="text-sm text-muted-foreground">团队成员</p>
+                  <div className="text-2xl font-bold">{teamData.overview.trainingCount}</div>
+                  <p className="text-sm text-muted-foreground">训练次数</p>
                 </div>
               </div>
             </CardContent>
@@ -264,8 +451,9 @@ export default function TeamAnalysisPage() {
               <div className="flex items-center gap-3">
                 <Trophy className="w-8 h-8 text-yellow-600" />
                 <div>
-                  <div className="text-lg font-bold text-yellow-600">{teamData.overview.topPerformer}</div>
-                  <p className="text-sm text-muted-foreground">最佳表现</p>
+                  <div className="text-lg font-bold text-yellow-600">{teamData.overview.highestScore}</div>
+                  <p className="text-sm text-muted-foreground">高得分</p>
+                  <p className="text-xs text-muted-foreground">{teamData.overview.highestScoreDate}</p>
                 </div>
               </div>
             </CardContent>
@@ -273,153 +461,191 @@ export default function TeamAnalysisPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Team Rankings */}
-          <div className="lg:col-span-2">
+          {/* Team Rankings / Training Records */}
+          <div className="lg:col-span-3">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Award className="w-5 h-5" />
-                  团队排名
+                  {selectedTask === "choice" ? (
+                    <>
+                      <BookOpen className="w-5 h-5" />
+                      选择题训练记录
+                    </>
+                  ) : selectedTask === "open" ? (
+                    <>
+                      <FileText className="w-5 h-5" />
+                      开放问答训练记录
+                    </>
+                  ) : selectedTask === "dialogue" ? (
+                    <>
+                      <MessageSquare className="w-5 h-5" />
+                      自由对话练习记录
+                    </>
+                  ) : selectedTask === "role" ? (
+                    <>
+                      <User className="w-5 h-5" />
+                      销售角色实训记录
+                    </>
+                  ) : (
+                    <>
+                      <Award className="w-5 h-5" />
+                      团队排名
+                    </>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {teamData.rankings.map((member) => (
-                    <div key={member.rank} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${getRankColor(member.rank)}`}
-                          >
-                            {getRankIcon(member.rank)}
-                          </div>
+                {(selectedTask === "choice" || selectedTask === "open") ? (
+                  // 显示培训记录
+                  <div className="space-y-4">
+                    {(selectedTask === "choice" ? teamData.trainingRecords : teamData.openTrainingRecords).map((record) => (
+                      <div key={record.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between mb-3">
                           <div>
-                            <h4 className="font-semibold">{member.name}</h4>
-                            <p className="text-sm text-muted-foreground">{member.department}</p>
+                            <h4 className="font-semibold">{record.title}</h4>
+                            <p className="text-sm text-muted-foreground">{record.date} · {record.duration}</p>
+                          </div>
+                          <div className="text-right">
+                            <div className={`text-lg font-bold ${getScoreColor(record.score)}`}>
+                              {record.score}
+                            </div>
+                            <p className="text-xs text-muted-foreground">得分</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className={`text-lg font-bold ${getScoreColor(member.overallScore)}`}>
-                            {member.overallScore}
-                          </div>
-                          <p className="text-xs text-muted-foreground">综合得分</p>
-                        </div>
-                      </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                        <div className="text-center">
-                          <div className="font-medium text-green-600">{member.completionRate}%</div>
-                          <div className="text-muted-foreground">完成率</div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                          <div className="text-center">
+                            <div className="font-medium text-green-600">{record.status}</div>
+                            <div className="text-muted-foreground">状态</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="font-medium">{record.questions}题</div>
+                            <div className="text-muted-foreground">问题数量</div>
+                          </div>
+                          {selectedTask === "choice" ? (
+                            <>
+                              <div className="text-center">
+                                <div className="font-medium">{record.correct}题</div>
+                                <div className="text-muted-foreground">正确数</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-medium text-blue-600">
+                                  {Math.round((record.correct / record.questions) * 100)}%
+                                </div>
+                                <div className="text-muted-foreground">正确率</div>
+                              </div>
+                            </>
+                          ) : selectedTask === "dialogue" ? (
+                            <>
+                              <div className="text-center">
+                                <div className="font-medium">{record.date}</div>
+                                <div className="text-muted-foreground">时间</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-medium">{record.attitude || "积极"}</div>
+                                <div className="text-muted-foreground">态度</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-medium">{record.scenarios}个</div>
+                                <div className="text-muted-foreground">问题数量</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-medium text-blue-600">{record.score}分</div>
+                                <div className="text-muted-foreground">得分</div>
+                              </div>
+                              <div className="text-center">
+                                <div className={`font-medium ${getGradeLevel(record.score).color}`}>{getGradeLevel(record.score).text}</div>
+                                <div className="text-muted-foreground">评价等级</div>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="text-center">
+                                <div className="font-medium">{record.date}</div>
+                                <div className="text-muted-foreground">时间</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-medium">{record.attitude || "投入"}</div>
+                                <div className="text-muted-foreground">态度</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-medium">{record.questions || record.scenarios || 3}个</div>
+                                <div className="text-muted-foreground">问题数量</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-medium text-blue-600">{record.score}分</div>
+                                <div className="text-muted-foreground">得分</div>
+                              </div>
+                              <div className="text-center">
+                                <div className={`font-medium ${getGradeLevel(record.score).color}`}>{getGradeLevel(record.score).text}</div>
+                                <div className="text-muted-foreground">评价等级</div>
+                              </div>
+                            </>
+                          )}
                         </div>
-                        <div className="text-center">
-                          <div className="font-medium text-blue-600">+{member.improvement}%</div>
-                          <div className="text-muted-foreground">提升幅度</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="font-medium">{member.skills.product}</div>
-                          <div className="text-muted-foreground">产品知识</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="font-medium">{member.skills.communication}</div>
-                          <div className="text-muted-foreground">沟通技巧</div>
+
+                        <div className="mt-3 pt-3 border-t">
+                          <h5 className="text-sm font-medium mb-2">{selectedTask === "choice" ? "评价反馈" : "综合评价"}</h5>
+                          <p className="text-sm text-muted-foreground">{record.feedback}</p>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  // 显示团队排名
+                  <div className="space-y-4">
+                    {teamData.rankings.map((member) => (
+                      <div key={member.rank} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${getRankColor(member.rank)}`}
+                            >
+                              {getRankIcon(member.rank)}
+                            </div>
+                            <div>
+                              <h4 className="font-semibold">{member.name}</h4>
+                              <p className="text-sm text-muted-foreground">{member.department}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className={`text-lg font-bold ${getScoreColor(member.overallScore)}`}>
+                              {member.overallScore}
+                            </div>
+                            <p className="text-xs text-muted-foreground">综合得分</p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                          <div className="text-center">
+                            <div className="font-medium text-green-600">{member.completionRate}%</div>
+                            <div className="text-muted-foreground">完成率</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="font-medium text-blue-600">+{member.improvement}%</div>
+                            <div className="text-muted-foreground">提升幅度</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="font-medium">{member.skills.product}</div>
+                            <div className="text-muted-foreground">产品知识</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="font-medium">{member.skills.communication}</div>
+                            <div className="text-muted-foreground">沟通技巧</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
 
-          {/* Department Stats */}
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5" />
-                  部门统计
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {teamData.departmentStats.map((dept, index) => (
-                    <div key={index} className="border rounded-lg p-4">
-                      <h4 className="font-semibold mb-3">{dept.department}</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">成员数量</span>
-                          <span className="font-medium">{dept.members}人</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">平均得分</span>
-                          <span className={`font-medium ${getScoreColor(dept.averageScore)}`}>{dept.averageScore}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">完成率</span>
-                          <span className="font-medium text-green-600">{dept.completionRate}%</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">优势技能</span>
-                          <Badge variant="secondary" className="text-xs">
-                            {dept.topSkill}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+
         </div>
 
-        {/* Comprehensive Analysis */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5" />
-              综合分析报告
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-semibold mb-3">团队优势</h4>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-600">✓</span>
-                    产品知识掌握度较高，平均分达到88分
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-600">✓</span>
-                    整体学习积极性强，完成率超过85%
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-600">✓</span>
-                    销售一部表现突出，可作为标杆部门
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-3">改进建议</h4>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2">
-                    <span className="text-yellow-600">!</span>
-                    加强成交技能训练，该项平均分偏低
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-yellow-600">!</span>
-                    销售三部需要重点关注和辅导
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-yellow-600">!</span>
-                    建议增加异议处理的实战练习
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+
       </div>
     </div>
   )

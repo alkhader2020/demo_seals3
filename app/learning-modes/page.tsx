@@ -28,7 +28,7 @@ interface Task {
 }
 
 export default function TaskManagementPage() {
-  const [activeTab, setActiveTab] = useState<"create" | "manage">("create")
+  const [activeTab, setActiveTab] = useState<"create" | "manage">("manage")
 
   // 官方任务（تبويب manage）
   const [tasks, setTasks] = useState<Task[]>([])
@@ -107,7 +107,7 @@ export default function TaskManagementPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 pb-safe">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-emerald-100">
         <div className="container mx-auto px-4 py-4">
@@ -125,20 +125,20 @@ export default function TaskManagementPage() {
         <div className="max-w-6xl mx-auto mb-8">
           <div className="flex space-x-1 bg-white p-1 rounded-lg shadow-sm">
             <button
-              onClick={() => setActiveTab("create")}
-              className={`flex-1 py-3 px-6 rounded-md font-medium transition-all ${
-                activeTab === "create" ? "bg-emerald-500 text-white shadow-md" : "text-gray-600 hover:text-emerald-600"
-              }`}
-            >
-              自主任务
-            </button>
-            <button
               onClick={() => setActiveTab("manage")}
               className={`flex-1 py-3 px-6 rounded-md font-medium transition-all ${
                 activeTab === "manage" ? "bg-emerald-500 text-white shadow-md" : "text-gray-600 hover:text-emerald-600"
               }`}
             >
               官方任务
+            </button>
+            <button
+              onClick={() => setActiveTab("create")}
+              className={`flex-1 py-3 px-6 rounded-md font-medium transition-all ${
+                activeTab === "create" ? "bg-emerald-500 text-white shadow-md" : "text-gray-600 hover:text-emerald-600"
+              }`}
+            >
+              自主任务
             </button>
           </div>
         </div>

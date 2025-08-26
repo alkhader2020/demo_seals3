@@ -356,7 +356,7 @@ export default function DialoguePracticePage() {
           </div>
         </header>
 
-        <main className="max-w-4xl mx-auto px-4 py-6">
+        <main className="max-w-6xl mx-auto px-4 py-6">
           {/* 角色信息卡片 */}
           <Card className="mb-6 bg-blue-50 border-blue-200">
             <CardContent className="p-4">
@@ -372,73 +372,80 @@ export default function DialoguePracticePage() {
             </CardContent>
           </Card>
 
-          {/* 对话区域 */}
-          <Card className="mb-6">
-            <CardContent className="p-0">
-              <div className="h-96 overflow-y-auto p-4 space-y-4">
-                {messages.map((message, index) => (
-                  <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                    <div
-                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                        message.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      <p className="text-sm">{message.content}</p>
-                      <p className="text-xs opacity-70 mt-1">{message.timestamp.toLocaleTimeString()}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {showHints && (
-            <Card className="mb-6 bg-amber-50 border-amber-200">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-amber-800 flex items-center gap-2">💡 陪练提醒</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Collapsible>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" className="w-full justify-between text-amber-700 hover:bg-amber-100">
-                      📝 话术示例
-                      <span className="text-xs">点击展开</span>
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="mt-2">
-                    <div className="bg-white/70 rounded-lg p-3 text-sm text-amber-800">
-                      {currentHints.scriptExample}
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <Collapsible>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" className="w-full justify-between text-amber-700 hover:bg-amber-100">
-                      🏗️ 演讲结构建议
-                      <span className="text-xs">点击展开</span>
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="mt-2">
-                    <div className="bg-white/70 rounded-lg p-3 text-sm text-amber-800">{currentHints.structure}</div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <div className="bg-white/70 rounded-lg p-3">
-                  <h4 className="text-sm font-medium text-amber-800 mb-2">🎯 关键词提示</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {currentHints.keywords.map((keyword, index) => (
-                      <Badge key={index} variant="secondary" className="bg-amber-100 text-amber-800 text-xs">
-                        {keyword}
-                      </Badge>
+          {/* 主要内容区域 - 左右布局 */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* 左侧：用户提问款和回答款 */}
+            <div className="lg:col-span-2">
+              {/* 对话区域 */}
+              <Card className="mb-6">
+                <CardContent className="p-0">
+                  <div className="h-96 overflow-y-auto p-4 space-y-4">
+                    {messages.map((message, index) => (
+                      <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                        <div
+                          className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                            message.role === "user"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          <p className="text-sm">{message.content}</p>
+                          <p className="text-xs opacity-70 mt-1">{message.timestamp.toLocaleTimeString()}</p>
+                        </div>
+                      </div>
                     ))}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* 右侧：陪练提醒款 */}
+            <div>
+              {showHints && (
+                <Card className="bg-amber-50 border-amber-200">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg text-amber-800 flex items-center gap-2">💡 陪练提醒</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Collapsible>
+                      <CollapsibleTrigger asChild>
+                        <Button variant="ghost" className="w-full justify-between text-amber-700 hover:bg-amber-100">
+                          📝 话术示例
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-2">
+                        <div className="bg-white/70 rounded-lg p-3 text-sm text-amber-800">
+                          {currentHints.scriptExample}
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+
+                    <Collapsible>
+                      <CollapsibleTrigger asChild>
+                        <Button variant="ghost" className="w-full justify-between text-amber-700 hover:bg-amber-100">
+                          🏗️ 演讲结构建议
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-2">
+                        <div className="bg-white/70 rounded-lg p-3 text-sm text-amber-800">{currentHints.structure}</div>
+                      </CollapsibleContent>
+                    </Collapsible>
+
+                    <div className="bg-white/70 rounded-lg p-3">
+                      <h4 className="text-sm font-medium text-amber-800 mb-2">🎯 关键词提示</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {currentHints.keywords.map((keyword, index) => (
+                          <Badge key={index} variant="secondary" className="bg-amber-100 text-amber-800 text-xs">
+                            {keyword}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
 
           {/* 输入区域 */}
           <Card>
