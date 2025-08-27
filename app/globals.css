@@ -1,0 +1,238 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(1 0 0); /* White background */
+  --foreground: oklch(0.35 0 0); /* Charcoal text #475569 */
+  --card: oklch(0.96 0 0); /* Light gray card background #f1f5f9 */
+  --card-foreground: oklch(0.35 0.12 162); /* Emerald text on cards #059669 */
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.35 0 0);
+  --primary: oklch(0.35 0.12 162); /* Emerald primary #059669 */
+  --primary-foreground: oklch(1 0 0); /* White text on primary */
+  --secondary: oklch(0.45 0.15 162); /* Vibrant emerald accent #10b981 */
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.35 0 0);
+  --accent: oklch(0.45 0.15 162); /* Accent emerald */
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.85 0 0); /* Light border #d1d5db */
+  --input: oklch(1 0 0);
+  --ring: oklch(0.35 0.12 162 / 0.5); /* Emerald focus ring */
+  --chart-1: oklch(0.35 0.12 162);
+  --chart-2: oklch(0.45 0.15 162);
+  --chart-3: oklch(0.6 0.2 330);
+  --chart-4: oklch(0.7 0.15 330);
+  --chart-5: oklch(0.8 0.15 85);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.96 0 0);
+  --sidebar-foreground: oklch(0.35 0 0);
+  --sidebar-primary: oklch(0.35 0.12 162);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.45 0.15 162);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.85 0 0);
+  --sidebar-ring: oklch(0.35 0.12 162 / 0.5);
+
+  /* === NEW: Safe-area vars === */
+  --safe-bottom: env(safe-area-inset-bottom, 0);
+  --safe-top: env(safe-area-inset-top, 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.45 0.15 162); /* Brighter emerald for dark mode */
+  --primary-foreground: oklch(0.145 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.45 0.15 162);
+  --accent-foreground: oklch(0.145 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.45 0.15 162 / 0.5);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.45 0.15 162);
+  --sidebar-primary-foreground: oklch(0.145 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.45 0.15 162 / 0.5);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.025em; }
+  .text-secondary { color: #6b7280; }
+  .text-muted { color: #9ca3af; }
+}
+
+/* ضبط حجم النصوص لجميع الأجهزة */
+html { font-size: 16px; }
+
+/* التابلت الكبير */
+@media (max-width: 1024px) { html { font-size: 15px; } }
+
+/* التابلت العادي */
+@media (max-width: 768px) { html { font-size: 14px; } }
+
+/* الموبايل */
+@media (max-width: 480px) { html { font-size: 12px; } }
+
+/* 自定义渐变按钮样式 */
+.bg-gradient-btn {
+  background: linear-gradient(135deg, #6a5af9, #9b8afc);
+  box-shadow: 0 4px 10px rgba(106, 90, 249, 0.3);
+  color: white;
+}
+.bg-gradient-btn:hover {
+  background: linear-gradient(135deg, #5847f1, #8675f9);
+}
+
+/* 学习中心渐变按钮 */
+.bg-gradient-learning {
+  background: linear-gradient(135deg, #6a5af9, #9b8afc);
+  box-shadow: 0 4px 10px rgba(106, 90, 249, 0.3);
+  color: white;
+}
+.bg-gradient-learning:hover {
+  background: linear-gradient(135deg, #5847f1, #8675f9);
+}
+
+/* 管理中心渐变按钮 */
+.bg-gradient-management {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  color: white;
+}
+.bg-gradient-management:hover {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+/* 卡片阴影 */
+.card-shadow {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+.card-shadow:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+}
+
+/* 淡入动画 */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.fade-in { animation: fadeIn 0.5s ease-in-out; }
+
+/* 滑入动画 */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide-in { animation: slideIn 0.5s ease-out; }
+
+/* === NEW: أدوات تحسين الهاتف === */
+
+/* زر الرجوع للأعلى (مع safe-area) */
+.back-to-top {
+  position: fixed;
+  bottom: calc(20px + var(--safe-bottom)); /* كان 20px فقط */
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6a5af9, #9b8afc);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(106, 90, 249, 0.3);
+  z-index: 100;
+  transition: all 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+}
+.back-to-top.visible { opacity: 1; visibility: visible; }
+.back-to-top:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(106, 90, 249, 0.4); }
+
+/* Mobile buttons fill width + touch size */
+@media (max-width: 768px) {
+  .mobile-full-btn { width: 100%; padding: 12px 16px; font-size: 16px; }
+}
+
+/* === NEW: أدوات عامة للاستخدام في JSX === */
+
+/* padding آمن أعلى/أسفل للـ header والـ main */
+.pb-safe { padding-bottom: calc(16px + var(--safe-bottom)); }
+.pt-safe { padding-top: calc(8px + var(--safe-top)); }
+
+/* مساحة لمس مريحة (48px) للأزرار والعناصر القابلة للنقر) */
+.btn-touch { min-height: 48px; }
+
+/* ظلّ أخف على الهاتف وتعطيل القفز عند hover */
+@media (max-width: 640px) {
+  .shadow-mobile { box-shadow: 0 4px 16px rgba(0,0,0,.06) !important; }
+  .card-shadow { box-shadow: 0 4px 12px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04); transform: none !important; }
+  .card-shadow:hover { transform: none; }
+}
