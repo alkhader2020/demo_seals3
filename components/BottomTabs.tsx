@@ -8,9 +8,7 @@ type Item = { name: string; href: string; icon: React.ComponentType<any> };
 
 const items: Item[] = [
   // 学习中心链接
-  { name: "学习中心", href: "/?tab=learning", icon: BookOpen },
-  { name: "管理中心", href: "/?tab=management", icon: Settings },
-  { name: "账户", href: "/account", icon: UserCircle },
+  
 ];
 
 function useActive(href: string) {

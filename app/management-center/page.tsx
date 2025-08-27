@@ -17,6 +17,10 @@ interface Employee {
   email: string
 }
 
+type TaskStatus = "pending" | "in-progress" | "completed"
+type TaskType = "销售基础训练" | "销售角色实训"
+type TaskMode = "选择题模式" | "开放问答模式" | "自由对话练习"
+
 interface Task {
   id: string
   title: string
@@ -25,18 +29,37 @@ interface Task {
   startDate: string
   deadline: string
   supervisor: string
-  status: "pending" | "in-progress" | "completed"
+  status: TaskStatus
   createdAt: string
-  type: "销售基础训练" | "销售角色实训"
-  mode?: "选择题模式" | "开放问答模式" | "自由对话练习"
+  type: TaskType
+  mode?: TaskMode
   taskType: string
+}
+
+/** نفس الشكل الذي تخزّنه في officialTasks */
+interface OfficialTask {
+  id: number
+  title: string
+  description: string
+  difficulty: string
+  duration: string
+  completed: boolean
+  materials: string[]
+  taskType: string
+  status: string
+  startDate: string
+  deadline: string
+  supervisor: string
+  type: TaskType
+  mode?: TaskMode
+  assignees: string[]
 }
 
 export default function ManagementCenterPage() {
   const [selectionMethod, setSelectionMethod] = useState<"department" | "position">("department")
   const [selectedEmployees, setSelectedEmployees] = useState<Employee[]>([])
   const [tasks, setTasks] = useState<Task[]>([])
-  
+
   // 模拟员工数据
   const mockEmployees: Employee[] = [
     { id: "1", name: "张三", department: "销售部", position: "销售专员", email: "zhangsan@company.com" },
@@ -51,9 +74,9 @@ export default function ManagementCenterPage() {
 
   // 页面加载时从localStorage获取已保存的任务
   useEffect(() => {
-    const savedTasks = localStorage.getItem('managementTasks')
+    const savedTasks = localStorage.getItem("managementTasks")
     if (savedTasks) {
-      setTasks(JSON.parse(savedTasks))
+      setTasks(JSON.parse(savedTasks) as Task[])
     }
   }, [])
 
@@ -65,98 +88,98 @@ export default function ManagementCenterPage() {
     }
   }
 
-  const handleCreateTask = (e: React.FormEvent) => {
+  const handleCreateTask = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
+    const formData = new FormData(e.currentTarget)
 
     const newTask: Task = {
       id: Date.now().toString(),
-      title: formData.get("title") as string,
-      description: formData.get("description") as string,
+      title: (formData.get("title") as string) ?? "",
+      description: (formData.get("description") as string) ?? "",
       assignees: selectedEmployees,
-      startDate: formData.get("startDate") as string,
-      deadline: formData.get("deadline") as string,
-      supervisor: formData.get("supervisor") as string,
+      startDate: (formData.get("startDate") as string) ?? "",
+      deadline: (formData.get("deadline") as string) ?? "",
+      supervisor: (formData.get("supervisor") as string) ?? "",
       status: "pending",
       createdAt: new Date().toISOString().split("T")[0],
-      type: formData.get("type") as "销售基础训练" | "销售角色实训",
-      mode: formData.get("mode") as "选择题模式" | "开放问答模式" | "自由对话练习" | undefined,
-      taskType: "官方任务", // 添加任务类型字段
+      type: formData.get("type") as TaskType,
+      mode: (formData.get("mode") as TaskMode) || undefined,
+      taskType: "官方任务",
     }
 
     // 保存到管理中心的任务列表
     const updatedTasks = [...tasks, newTask]
     setTasks(updatedTasks)
-    localStorage.setItem('managementTasks', JSON.stringify(updatedTasks))
-    
+    localStorage.setItem("managementTasks", JSON.stringify(updatedTasks))
+
     setSelectedEmployees([])
 
-    // 将新任务同步到学习任务模式页面的官方任务列表
-    const existingOfficialTasks = JSON.parse(localStorage.getItem('officialTasks') || '[]')
-    const newOfficialTask = {
-      id: parseInt(newTask.id),
+    // 同步到学习中心的 officialTasks
+    const existingOfficialTasks: OfficialTask[] = JSON.parse(
+      localStorage.getItem("officialTasks") || "[]"
+    ) as OfficialTask[]
+
+    const newOfficialTask: OfficialTask = {
+      id: parseInt(newTask.id, 10),
       title: newTask.title,
       description: newTask.description,
-      difficulty: "中级", // 默认难度
-      duration: "45分钟", // 默认时长
+      difficulty: "中级",
+      duration: "45分钟",
       completed: false,
-      materials: ["任务说明"], // 默认材料
+      materials: ["任务说明"],
       taskType: "官方任务",
       status: "开始学习",
-      // 添加额外信息以确保两个位置展示相同的任务内容
       startDate: newTask.startDate,
       deadline: newTask.deadline,
       supervisor: newTask.supervisor,
       type: newTask.type,
       mode: newTask.mode,
-      assignees: newTask.assignees.map(emp => emp.name)
+      assignees: newTask.assignees.map((emp) => emp.name),
     }
 
-    // 检查是否已存在相同ID的任务，如果存在则替换，否则添加
-    const taskIndex = existingOfficialTasks.findIndex(task => task.id === newOfficialTask.id)
-    let updatedOfficialTasks
+    const taskIndex = existingOfficialTasks.findIndex(
+      (task: OfficialTask) => task.id === newOfficialTask.id
+    )
+    let updatedOfficialTasks: OfficialTask[]
     if (taskIndex !== -1) {
       updatedOfficialTasks = [...existingOfficialTasks]
       updatedOfficialTasks[taskIndex] = newOfficialTask
     } else {
       updatedOfficialTasks = [...existingOfficialTasks, newOfficialTask]
     }
+    localStorage.setItem("officialTasks", JSON.stringify(updatedOfficialTasks))
 
-    localStorage.setItem('officialTasks', JSON.stringify(updatedOfficialTasks))
+    // 同步到任务管理页面 tasksManagement
+    const existingTasksManagement: Task[] = JSON.parse(
+      localStorage.getItem("tasksManagement") || "[]"
+    ) as Task[]
 
-    // 将新任务同步到任务管理页面
-    const existingTasksManagement = JSON.parse(localStorage.getItem('tasksManagement') || '[]')
-    const newTaskForManagement = {
-      ...newTask,
-    }
+    const newTaskForManagement: Task = { ...newTask }
 
-    // 检查是否已存在相同ID的任务，如果存在则替换，否则添加
-    const taskMgmtIndex = existingTasksManagement.findIndex(task => task.id === newTaskForManagement.id)
-    let updatedTasksManagement
+    const taskMgmtIndex = existingTasksManagement.findIndex(
+      (task: Task) => task.id === newTaskForManagement.id
+    )
+    let updatedTasksManagement: Task[]
     if (taskMgmtIndex !== -1) {
       updatedTasksManagement = [...existingTasksManagement]
       updatedTasksManagement[taskMgmtIndex] = newTaskForManagement
     } else {
       updatedTasksManagement = [...existingTasksManagement, newTaskForManagement]
     }
+    localStorage.setItem("tasksManagement", JSON.stringify(updatedTasksManagement))
 
-    localStorage.setItem('tasksManagement', JSON.stringify(updatedTasksManagement))
-
-    // 触发自定义事件，通知其他页面更新任务列表
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('officialTasksUpdated'))
-      window.dispatchEvent(new Event('tasksManagementUpdated'))
+    // 通知其他页面
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("officialTasksUpdated"))
+      window.dispatchEvent(new Event("tasksManagementUpdated"))
     }
 
     alert("任务创建成功！已同步到任务管理页面和学习中心页面")
+    e.currentTarget.reset()
   }
 
   const getFilteredEmployees = () => {
-    if (selectionMethod === "department") {
-      return mockEmployees
-    } else if (selectionMethod === "position") {
-      return mockEmployees
-    }
+    // فيما بعد يمكنك تطبيق الترشيح الحقيقي حسب department/position
     return mockEmployees
   }
 
@@ -166,7 +189,7 @@ export default function ManagementCenterPage() {
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            <Link href="/">
+            <Link href="/" className="hidden md:block">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 返回首页
@@ -197,48 +220,28 @@ export default function ManagementCenterPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">任务标题 *</label>
-                    <Input
-                      type="text"
-                      name="title"
-                      required
-                      placeholder="请输入任务标题"
-                    />
+                    <Input type="text" name="title" required placeholder="请输入任务标题" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">开始时间 *</label>
-                    <Input
-                      type="date"
-                      name="startDate"
-                      required
-                    />
+                    <Input type="date" name="startDate" required />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">截止时间 *</label>
-                    <Input
-                      type="date"
-                      name="deadline"
-                      required
-                    />
+                    <Input type="date" name="deadline" required />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">负责人 *</label>
-                    <Input
-                      type="text"
-                      name="supervisor"
-                      required
-                      placeholder="请输入负责人姓名"
-                    />
+                    <Input type="text" name="supervisor" required placeholder="请输入负责人姓名" />
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium mb-2">任务描述</label>
-                    <Textarea
-                      name="description"
-                      rows={3}
-                      placeholder="请输入任务描述"
-                    />
+                    <Textarea name="description" rows={3} placeholder="请输入任务描述" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">任务类型 *</label>
+                    {/* ملاحظة: Select من shadcn لا يدعم name افتراضياً.
+                        إن أردت التقاط القيمة عبر FormData، ضع input مخفي وحدثه onValueChange. */}
                     <Select name="type" required>
                       <SelectTrigger>
                         <SelectValue placeholder="选择任务类型" />
@@ -284,7 +287,7 @@ export default function ManagementCenterPage() {
                         name="selectionMethod"
                         value="department"
                         checked={selectionMethod === "department"}
-                        onChange={(e) => setSelectionMethod(e.target.value as any)}
+                        onChange={(e) => setSelectionMethod(e.target.value as "department" | "position")}
                         className="mr-2"
                       />
                       按组织架构筛选
@@ -295,7 +298,7 @@ export default function ManagementCenterPage() {
                         name="selectionMethod"
                         value="position"
                         checked={selectionMethod === "position"}
-                        onChange={(e) => setSelectionMethod(e.target.value as any)}
+                        onChange={(e) => setSelectionMethod(e.target.value as "department" | "position")}
                         className="mr-2"
                       />
                       按岗位名称筛选
@@ -397,11 +400,7 @@ export default function ManagementCenterPage() {
 
             {/* Submit Button */}
             <div className="flex justify-end">
-              <Button
-                type="submit"
-                disabled={selectedEmployees.length === 0}
-                className="px-8"
-              >
+              <Button type="submit" disabled={selectedEmployees.length === 0} className="px-8">
                 创建并下发任务
               </Button>
             </div>
@@ -418,28 +417,26 @@ export default function ManagementCenterPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {tasks.map((task) => (
+                  {tasks.map((task: Task) => (
                     <div key={task.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <h3 className="font-semibold text-lg">{task.title}</h3>
                           <p className="text-muted-foreground text-sm">{task.description}</p>
                         </div>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          task.status === "completed"
-                            ? "bg-green-100 text-green-800"
-                            : task.status === "in-progress"
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            task.status === "completed"
+                              ? "bg-green-100 text-green-800"
+                              : task.status === "in-progress"
                               ? "bg-yellow-100 text-yellow-800"
                               : "bg-gray-100 text-gray-800"
-                        }`}>
-                          {task.status === "completed"
-                            ? "已完成"
-                            : task.status === "in-progress"
-                              ? "进行中"
-                              : "待开始"}
+                          }`}
+                        >
+                          {task.status === "completed" ? "已完成" : task.status === "in-progress" ? "进行中" : "待开始"}
                         </span>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-muted-foreground mt-4">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4" />

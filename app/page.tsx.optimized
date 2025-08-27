@@ -240,7 +240,10 @@ export default function HomePage() {
         <div className="relative bg-white p-1 rounded-xl shadow-md mb-4 sm:mb-6 md:mb-8">
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
             <button
-              onClick={() => setActiveTab("learning")}
+              onClick={() => {
+                setActiveTab("learning");
+                router.push("/?tab=learning", { scroll: false });
+              }}
               className={`px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl font-bold flex items-center justify-center gap-1 sm:gap-2 transition-all duration-300 flex-1 ${
                 activeTab === "learning"
                   ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg scale-[1.02]"
@@ -251,7 +254,10 @@ export default function HomePage() {
               <span className="text-xs sm:text-sm sm:text-base">学习中心</span>
             </button>
             <button
-              onClick={() => setActiveTab("management")}
+              onClick={() => {
+                setActiveTab("management");
+                router.push("/?tab=management", { scroll: false });
+              }}
               className={`px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl font-bold flex items-center gap-1 sm:gap-2 transition-all duration-300 ${
                 activeTab === "management"
                   ? "bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-lg scale-105 border-2 border-green-400"
@@ -288,27 +294,26 @@ export default function HomePage() {
         <ChevronUp size={24} />
       </div>
 
-      {/* 移动端底部导航栏 */}
-      <div className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 flex items-center justify-around px-4 shadow-lg md:hidden">
+      {/* 移动端底部导航栏已删除 */}
         <button 
           onClick={() => setActiveTab("learning")}
           className={`flex flex-col items-center justify-center w-16 h-full ${activeTab === "learning" ? "text-blue-600" : "text-gray-500"}`}
         >
-          <BookOpen size={20} />
+      
           <span className="text-xs mt-1">学习</span>
         </button>
         <button 
           onClick={() => setActiveTab("management")}
           className={`flex flex-col items-center justify-center w-16 h-full ${activeTab === "management" ? "text-green-600" : "text-gray-500"}`}
         >
-          <Settings size={20} />
+      
           <span className="text-xs mt-1">管理</span>
         </button>
         <button 
           onClick={scrollToTop}
           className="flex flex-col items-center justify-center w-16 h-full text-gray-500"
         >
-          <ChevronUp size={20} />
+      
           <span className="text-xs mt-1">顶部</span>
         </button>
       </div>
