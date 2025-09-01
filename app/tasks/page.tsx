@@ -23,7 +23,7 @@ interface Task {
   supervisor: string
   status: "pending" | "in-progress" | "completed"
   createdAt: string
-  type: "销售基础训练" | "销售角色实训"
+  type: "销售基础训练" | "销售角色实训" | "全部类型"
   mode?: "选择题模式" | "开放问答模式" | "自由对话练习"
   taskType: string
 }
@@ -173,7 +173,7 @@ export default function TaskManagementPage() {
       supervisor: formData.get("supervisor") as string,
       status: "pending",
       createdAt: new Date().toISOString().split("T")[0],
-      type: formData.get("type") as "销售基础训练" | "销售角色实训",
+      type: formData.get("type") as "销售基础训练" | "销售角色实训" | "全部类型",
       mode: formData.get("mode") as "选择题模式" | "开放问答模式" | "自由对话练习" | undefined,
       taskType: "官方任务",
     }
@@ -264,10 +264,10 @@ export default function TaskManagementPage() {
         {/* Create Task */}
         {activeTab === "create" && (
           <div className="max-w-6xl mx-auto">
-            <form onSubmit={handleCreateTask} className="space-y-8">
+            <form onSubmit={handleCreateTask} className="space-y-6">
               {/* Task Info */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-6">任务信息</h2>
+              <div className="bg-white rounded-xl shadow-lg p-5">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">任务信息</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* 任务标题 + 知识库 */}
                   <div>
@@ -407,69 +407,29 @@ export default function TaskManagementPage() {
                       onChange={(e) => {
                         const node = document.getElementById("taskModeContainer")
                         if (!node) return
-                        if (e.target.value === "销售基础训练") node.classList.remove("hidden")
+                        if (e.target.value === "销售角色实训") node.classList.remove("hidden")
                         else node.classList.add("hidden")
                       }}
                     >
-                      <option value="">选择任务类</option>
+                      <option value="">选择任务类型</option>
                       <option value="销售基础训练">销售基础训练</option>
                       <option value="销售角色实训">销售角色实训</option>
+                      <option value="全部类型">全部类型</option>
                     </select>
-                  </div>
-
-                  <div id="taskModeContainer" className="hidden">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">任务模式 *</label>
-                    <div className="space-y-2">
-                      <label className="flex items-center">
-                        <input type="radio" name="mode" value="选择题模式" className="mr-2" />
-                        选择题模式
-                      </label>
-                      <label className="flex items-center">
-                        <input type="radio" name="mode" value="开放问答模式" className="mr-2" />
-                        开放问答模式
-                      </label>
-                      <label className="flex items-center">
-                        <input type="radio" name="mode" value="自由对话练习" className="mr-2" />
-                        自由对话练习
-                      </label>
-                    </div>
+                  
                   </div>
                 </div>
               </div>
 
               {/* 选择人员 */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-6">选择人员</h2>
+              <div className="bg-white rounded-xl shadow-lg p-5">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">选择人员</h2>
 
                 <div className="mb-6">
-                  <div className="flex flex-wrap gap-4">
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name="selectionMethod"
-                        value="department"
-                        checked={selectionMethod === "department"}
-                        onChange={(e) => setSelectionMethod(e.target.value as any)}
-                        className="mr-2"
-                      />
-                      按组织架构筛选
-                    </label>
-                  </div>
+                  
                 </div>
 
-                {selectionMethod === "department" && (
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">选择部门</label>
-                    <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-                      <option value="">全部部门</option>
-                      {departments.map((dept) => (
-                        <option key={dept} value={dept}>
-                          {dept}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
+
 
                 {selectionMethod === "position" && (
                   <div className="mb-6">
@@ -486,8 +446,8 @@ export default function TaskManagementPage() {
                 )}
 
                 <div>
-                  <h3 className="text-lg font-medium text-gray-800 mb-4">员工列表</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+                  <h3 className="text-lg font-medium text-gray-800 mb-3">员工列表</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-80 overflow-y-auto">
                     {getFilteredEmployees().map((employee) => (
                       <div
                         key={employee.id}
@@ -499,13 +459,23 @@ export default function TaskManagementPage() {
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-medium text-gray-800">{employee.name}</div>
-                            <div className="text-sm text-gray-600">{employee.department}</div>
-                            <div className="text-sm text-gray-500">{employee.position}</div>
+                          <div className="flex-1">
+                            <div className="font-semibold text-lg text-gray-800 mb-1">{employee.name}</div>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                {employee.department}
+                              </span>
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                {employee.position}
+                              </span>
+                            </div>
                           </div>
                           {selectedEmployees.find((e) => e.id === employee.id) && (
-                            <div className="text-emerald-500">✓</div>
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
+                              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                              </svg>
+                            </div>
                           )}
                         </div>
                       </div>
